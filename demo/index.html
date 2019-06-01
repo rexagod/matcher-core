@@ -1,0 +1,21 @@
+<body style="background-color: black">
+<h2 style="font-family:monospace; color: whitesmoke">&gt;&nbsp;orb-core: check console for results</h2>
+</body>
+
+<script src="../orb.core.com.js"></script>
+<script>
+
+var a;
+
+function getUtils(x) {
+	a = x;
+	console.log(a);
+}
+
+Promise.resolve(new orbify('./assets/resources/small.jpg', './assets/resources/big.jpg', {
+	browser: true
+}).utils).then(function (utils) {
+	getUtils(utils); // passing resolved value to callback's scope
+})
+
+</script>

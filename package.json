@@ -1,0 +1,36 @@
+{
+  "name": "matcher.js",
+  "version": "0.1.0",
+  "description": "Pattern-mining module for detecting key-points in images.",
+  "main": "matcher.js",
+  "scripts": {
+    "build": "./node_modules/browserify src/orbify.js -o orbify.min.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rexagod/matcher.git"
+  },
+  "keywords": [
+    "publiclab",
+    "rexagod",
+    "Leaflet.DistortableImage",
+    "ldi",
+    "ORB",
+    "pattern-mining",
+    "pattern-matching",
+    "ransac"
+  ],
+  "author": "Pranshu Srivastava",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/rexagod/matcher/issues"
+  },
+  "devDependencies": {
+    "balanced-match": "^1.0.0",
+    "browserify": "^16.2.3",
+    "eslint": "^5.16.0",
+    "eslint-config-google": "^0.13.0"
+  },
+  "homepage": "https://github.com/rexagod/matcher#readme"
+}
