@@ -910,7 +910,7 @@ const orbify = function(X, Y, args={}) {
         // eslint-disable-next-line prefer-promise-reject-errors
         reject('utils async error!');
       }
-    }, 3000);
+    }, 5000);
   });
 };
 

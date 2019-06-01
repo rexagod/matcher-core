@@ -1,5 +1,6 @@
-<body style="background-color: black">
-<h2 style="font-family:monospace; color: whitesmoke">&gt;&nbsp;orb-core: check console for results</h2>
+<body style="font-family:monospace; color: whitesmoke;background-color: black">
+<h2>&gt;&nbsp;orb-core: processing...</h2>
+<h3 id='res' style="color: chartreuse"></h3>
 </body>
 
 <script src="../orb.core.com.js"></script>
@@ -8,8 +9,8 @@
 var a;
 
 function getUtils(x) {
-	a = x;
-	console.log(a);
+	a = JSON.stringify(x, undefined, 2);
+	document.getElementById('res').innerHTML = a;
 }
 
 Promise.resolve(new orbify('./assets/resources/small.jpg', './assets/resources/big.jpg', {
