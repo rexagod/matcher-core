@@ -1,5 +1,5 @@
 {
-  "name": "matcher.js",
+  "name": "orb.core.com.js",
   "version": "0.1.0",
   "description": "Pattern-mining module for detecting key-points in images 🎈",
   "main": "orb.core.js",
