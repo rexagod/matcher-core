@@ -1,8 +1,8 @@
 {
-  "name": "orb.core.com.js",
+  "name": "matcher-core",
   "version": "0.1.0",
   "description": "Pattern-mining module for detecting key-points in images 🎈",
-  "main": "orb.core.js",
+  "main": "orb.core.com.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rexagod/matcher-core.git"
