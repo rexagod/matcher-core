@@ -14,7 +14,7 @@ function getUtils(x) {
 }
 
 Promise.resolve(new orbify('./assets/resources/small.jpg', './assets/resources/big.jpg', {
-	browser: true
+	browser: false
 }).utils).then(function (utils) {
 	getUtils(utils); // passing resolved value to callback's scope
 })
