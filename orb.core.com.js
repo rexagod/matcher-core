@@ -767,10 +767,11 @@ const orbify = function(X, Y, args={}) {
       })(), numTrainLevels = 4;
 
     const demoOpt = function() {
-      this.blur_size = 5;
-      this.lap_thres = 30;
-      this.eigen_thres = 35;
-      this.matchThreshold = 49;
+      const params = args.params;
+      this.blur_size = params.blur_size || 5;
+      this.lap_thres = params.lap_thres || 30;
+      this.eigen_thres = params.eigen_thres || 35;
+      this.matchThreshold = params.matchThreshold || 49;
 
       this.train_pattern = function() {
         const maxPatternSize = 512, maxPerLevel = 300, scInc = Math.sqrt(2.0), ctxx = c.getContext('2d'),
@@ -880,6 +881,7 @@ const orbify = function(X, Y, args={}) {
       }
 
       if (numMatches) {
+        // Let this be static (30%)?
         if (goodMatches >= numMatches * 30 / 100) {
           matchesArray = renderMatches(args, ctx, matches, numMatches, screenCorners, patternCorners, matchesArray, matchMask);
         }
