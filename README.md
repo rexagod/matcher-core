@@ -4,13 +4,13 @@
 
 ## Description
 
-`matcher-core` essentially employs the ORB[(Oriented FAST and Rotated BRIEF)](http://www.willowgarage.com/sites/default/files/orb_final.pdf) algorithm to mine patterns using the well-known [FAST(Features from Accelerated Segment Test)](http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/AV1011/AV1FeaturefromAcceleratedSegmentTest.pdf) keypoint detector and the [BRIEF(Binary Robust Independent Elementary Features)](https://www.cs.ubc.ca/~lowe/525/papers/calonder_eccv10.pdf) descriptor technologies, which provide appreciable performance boosts on low computational costs. The main advantages, without going in too deep into details, of building this module around [ORB]() were as follows.
+`matcher-core` essentially employs the ORB[(Oriented FAST and Rotated BRIEF)](http://www.willowgarage.com/sites/default/files/orb_final.pdf) algorithm to mine patterns using the well-known [FAST(Features from Accelerated Segment Test)](http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/AV1011/AV1FeaturefromAcceleratedSegmentTest.pdf) keypoint detector and the [BRIEF(Binary Robust Independent Elementary Features)](https://www.cs.ubc.ca/~lowe/525/papers/calonder_eccv10.pdf) descriptor technologies, which provide appreciable performance boosts on low computational costs. The main advantages, without going in too deep into details, of building this module around [ORB](http://www.willowgarage.com/sites/default/files/orb_final.pdf) were as follows.
 
-	* About 10^2 times faster than [SURF(Speeded-Up Robust Features)](https://www.vision.ee.ethz.ch/~surf/eccv06.pdf), a close alternative before [ORB]() till 2011.
-	* Addition of a fast and accurate orientation component to [FAST]().
-	* Efficient in-built computational support for analysis of variance and correlation.
-	* Decorrelates [BRIEF]() features under rotational invariance, leading to better performance in nearest-neighbor applications.
-	* Unlike [SURF]() and [SIFT(Scale-Invariant Feature Transform)](http://weitz.de/sift/), which are patented algorithms, [ORB]() is free to use.
+- About 10^2 times faster than [SURF(Speeded-Up Robust Features)](https://www.vision.ee.ethz.ch/~surf/eccv06.pdf), a close alternative before [ORB](http://www.willowgarage.com/sites/default/files/orb_final.pdf) till 2011.
+- Addition of a fast and accurate orientation component to [FAST](http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/AV1011/AV1FeaturefromAcceleratedSegmentTest.pdf).
+- Efficient in-built computational support for analysis of variance and correlation.
+- Decorrelates [BRIEF](https://www.cs.ubc.ca/~lowe/525/papers/calonder_eccv10.pdf) features under rotational invariance, leading to better performance in nearest-neighbor applications.
+- Unlike [SURF](https://www.vision.ee.ethz.ch/~surf/eccv06.pdf) and [SIFT(Scale-Invariant Feature Transform)](http://weitz.de/sift/), which are patented algorithms, [ORB](http://www.willowgarage.com/sites/default/files/orb_final.pdf) is free to use.
 
 ## Setup
 
@@ -18,7 +18,7 @@
 ```html
 <script src="../orb.core.com.js"></script>
 ```
-* The matcher-core library's [entry point file]() will return a promise back into the injected scope. Therefore, one needs to resolve the response and passing it to desired function scope before using it.
+* The matcher-core library's [entry point file](/matcher.js) will return a promise back into the injected scope. Therefore, one needs to resolve the response and passing it to desired function scope before using it.
 ```html
 // Inside index.html
 <script>
@@ -94,10 +94,10 @@ The live-demonstration of an [example file](/demo/index.html) using this library
 
 ## Building from source
 
-* To build modified source files, do:
-	* `npm i -g browserify` to globally install [browserify](https://www.npmjs.com/package/browserify).
-	* `browserify src -o orb.core.com.js` to build from the [`/src`](/src) directory.
-	* Use the newly browserified [`orb.com.core.js`](/orb.com.core.js) file as the entry point.
+- To build modified source files, do:
+	- `npm i -g browserify` to globally install [browserify](https://www.npmjs.com/package/browserify).
+	- `browserify src -o orb.core.com.js` to build from the [`/src`](/src) directory.
+	- Use the newly browserified [`orb.com.core.js`](/orb.com.core.js) file as the entry point.
 
 ## Codeflow
 
