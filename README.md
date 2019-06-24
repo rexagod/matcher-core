@@ -1,6 +1,6 @@
 # [`matcher-core`](/): ORB-focused pattern-miner for PublicLab
 
-![LICENSE](https://img.shields.io/badge/license-BSD--2--Clause-green.svg)
+![LICENSE](https://img.shields.io/badge/license-GNU--General--Public--License--v3.0-green.svg)
 
 ## Description
 
