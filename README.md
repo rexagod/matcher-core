@@ -129,4 +129,4 @@ All this being said, if you still have any questions regarding `matcher-core`'s 
 
 ## LICENSE
 
-[BSD-2-Clause](/LICENSE)
+[GNU-General-Public-License-v3.0](/LICENSE)
