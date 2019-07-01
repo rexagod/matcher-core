@@ -13,13 +13,7 @@ function getUtils(x) {
 	document.getElementById('res').innerHTML = a;
 }
 
-Promise.resolve(new orbify('./assets/resources/small.jpg', './assets/resources/big.jpg', {
-	browser: true,
-	params: {
-		lap_thres: 35,
-		eigen_thres: 40
-	}
-}).utils).then(function (utils) {
+Promise.resolve(new orbify('./assets/resources/small.jpg', './assets/resources/big.jpg').utils).then(function (utils) {
 	getUtils(utils); // passing resolved value to callback's scope
 })
 

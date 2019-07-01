@@ -723,7 +723,13 @@ const {renderCorners} = require('../assets/utils/orb.renderCorners.js');
 const {renderMatches} = require('../assets/utils/orb.renderMatches.js');
 
 // ===================ORB-CORE ALGORITHM===================
-const orbify = function(X, Y, args={}) {
+const orbify = function(X, Y, args = {}) {
+  // replace by this
+  args.browser = args.browser || true;
+  args.caching = args.caching || true;
+  args.leniency = args.leniency || 30;
+  this.args = args;
+  self = this;
   const canvas = document.createElement('CANVAS'),
     c = document.createElement('CANVAS'),
     primaryImage = new Image(), secImage = new Image();
@@ -767,7 +773,7 @@ const orbify = function(X, Y, args={}) {
       })(), numTrainLevels = 4;
 
     const demoOpt = function() {
-      const params = args.params;
+      const params = self.args.params || {};
       this.blur_size = params.blur_size || 5;
       this.lap_thres = params.lap_thres || 30;
       this.eigen_thres = params.eigen_thres || 35;
@@ -853,7 +859,10 @@ const orbify = function(X, Y, args={}) {
       }
     }
 
-    function tick() {
+    async function tick() {
+      if (matchesArray.length && cornersArray.length) {
+        return;
+      }
       window.requestAnimationFrame(tick);
 
       const primaryImageData = ctx.getImageData(0, 0, 640, 480);
@@ -873,7 +882,7 @@ const orbify = function(X, Y, args={}) {
       numCorners = detectKeypoints(imgU8Smooth, screenCorners, 500);
 
       jsfeat.orb.describe(imgU8Smooth, screenCorners, numCorners, screenDescriptors);
-      cornersArray = renderCorners(args, cornersArray, screenCorners, numCorners);
+      cornersArray = renderCorners(self.args, cornersArray, screenCorners, numCorners);
 
       if (patternPreview) {
         numMatches = matchPattern(matches, screenDescriptors, patternDescriptors, numTrainLevels, options);
@@ -881,9 +890,8 @@ const orbify = function(X, Y, args={}) {
       }
 
       if (numMatches) {
-        // Let this be static (30%)?
-        if (goodMatches >= numMatches * 30 / 100) {
-          matchesArray = renderMatches(args, ctx, matches, numMatches, screenCorners, patternCorners, matchesArray, matchMask);
+        if (goodMatches >= numMatches * self.args.leniency / 100) {
+          matchesArray = renderMatches(self.args, ctx, matches, numMatches, screenCorners, patternCorners, matchesArray, matchMask);
         }
       }
     }
@@ -903,16 +911,24 @@ const orbify = function(X, Y, args={}) {
     tick();
   })();
 
-  this.utils = new Promise(function(resolve, reject) {
-    setTimeout(function() {
-      const utils = {matches: matchesArray, corners: cornersArray};
-      if (utils.matches.length && utils.corners.length) {
-        resolve(utils);
-      } else {
-        // eslint-disable-next-line prefer-promise-reject-errors
-        reject('utils async error!');
-      }
-    }, 5000);
+  if (!self.args.caching ||
+    // recur only if both images are changed w.r.t. content (not order)
+    (localStorage.getItem('X') !== X && localStorage.getItem('X') !== Y) ||
+    (localStorage.getItem('Y') !== X && localStorage.getItem('Y') !== Y)) {
+    localStorage.removeItem('utils');
+  }
+
+  this.utils = new Promise( function(resolve) {
+    if (!self.args.caching || !localStorage.getItem('utils')) {
+      setTimeout(function() {
+        localStorage.setItem('utils', JSON.stringify({matches: matchesArray, corners: cornersArray}));
+        localStorage.setItem('X', X);
+        localStorage.setItem('Y', Y);
+        resolve(JSON.parse(localStorage.getItem('utils')));
+      }, 1000);
+    } else {
+      resolve(JSON.parse(localStorage.getItem('utils')));
+    }
   });
 };
 
