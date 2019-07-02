@@ -858,11 +858,11 @@ const orbify = function(X, Y, args = {}) {
         matches[i] = new matchT();
       }
     }
-
-    async function tick() {
+    function tick() {
       if (matchesArray.length && cornersArray.length) {
         return;
       }
+      // window.count++;
       window.requestAnimationFrame(tick);
 
       const primaryImageData = ctx.getImageData(0, 0, 640, 480);
@@ -907,6 +907,7 @@ const orbify = function(X, Y, args = {}) {
       options.train_pattern();
     };
 
+    // window.count =0;
     demoApp();
     tick();
   })();
@@ -919,15 +920,41 @@ const orbify = function(X, Y, args = {}) {
   }
 
   this.utils = new Promise( function(resolve) {
-    if (!self.args.caching || !localStorage.getItem('utils')) {
-      setTimeout(function() {
-        localStorage.setItem('utils', JSON.stringify({matches: matchesArray, corners: cornersArray}));
-        localStorage.setItem('X', X);
-        localStorage.setItem('Y', Y);
-        resolve(JSON.parse(localStorage.getItem('utils')));
-      }, 1000);
-    } else {
+    function uncachedResponse() {
+      localStorage.setItem('utils', JSON.stringify({matches: matchesArray, corners: cornersArray}));
+      localStorage.setItem('X', X);
+      localStorage.setItem('Y', Y);
       resolve(JSON.parse(localStorage.getItem('utils')));
+      return;
+    }
+    let timer = 1000, continueThread = false;
+    if (!self.args.caching) {
+      setTimeout(uncachedResponse, timer);
+    } else {
+      if (matchesArray.length && cornersArray.length) {
+        resolve(JSON.parse(localStorage.getItem('utils')));
+      } else {
+        setInterval(function() {
+          if (!continueThread) {
+            setTimeout(function() {
+              if (!matchesArray.length || !cornersArray.length) {
+                timer += 1;
+                return;
+              } else {
+                setTimeout(function() {
+                  if (continueThread) {
+                    return;
+                  }
+                  uncachedResponse();
+                  continueThread = true;
+                }, timer);
+              }
+            }, timer);
+          } else {
+            return;
+          }
+        }, 1);
+      }
     }
   });
 };
