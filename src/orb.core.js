@@ -206,7 +206,7 @@ const orbify = function(X, Y, args = {}) {
     (localStorage.getItem('Y') !== X && localStorage.getItem('Y') !== Y)) {
     localStorage.removeItem('utils');
   }
-
+  window.x=0;
   this.utils = new Promise( function(resolve) {
     function uncachedResponse() {
       localStorage.setItem('utils', JSON.stringify({matches: matchesArray, corners: cornersArray}));
@@ -215,29 +215,29 @@ const orbify = function(X, Y, args = {}) {
       resolve(JSON.parse(localStorage.getItem('utils')));
       return;
     }
-    let timer = 1000, continueThread = false;
+    let timer = 0, continueThread = false;
     if (!self.args.caching) {
       setTimeout(uncachedResponse, timer);
     } else {
-      if (matchesArray.length && cornersArray.length) {
+      if (JSON.parse(localStorage.getItem('utils')) &&
+      JSON.parse(localStorage.getItem('utils')).matches.length) {
         resolve(JSON.parse(localStorage.getItem('utils')));
       } else {
         setInterval(function() {
           if (!continueThread) {
-            setTimeout(function() {
-              if (!matchesArray.length || !cornersArray.length) {
-                timer += 1;
-                return;
-              } else {
-                setTimeout(function() {
-                  if (continueThread) {
-                    return;
-                  }
-                  uncachedResponse();
-                  continueThread = true;
-                }, timer);
-              }
-            }, timer);
+            if (!matchesArray.length) {
+              timer += 1;
+              return;
+            } else {
+              x++;
+              setTimeout(function() {
+                if (continueThread) {
+                  return;
+                }
+                uncachedResponse();
+                continueThread = true;
+              }, timer);
+            }
           } else {
             return;
           }
