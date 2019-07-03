@@ -11,7 +11,7 @@ const {renderCorners} = require('../assets/utils/orb.renderCorners.js');
 const {renderMatches} = require('../assets/utils/orb.renderMatches.js');
 
 // ===================ORB-CORE ALGORITHM===================
-const orbify = function(X, Y, args = {}) {
+const orbify = function(X, Y, cb, args = {}) {
   // replace by this
   args.browser = args.browser || true;
   args.caching = args.caching || true;
@@ -206,14 +206,14 @@ const orbify = function(X, Y, args = {}) {
     (localStorage.getItem('Y') !== X && localStorage.getItem('Y') !== Y)) {
     localStorage.removeItem('utils');
   }
-  window.x=0;
-  this.utils = new Promise( function(resolve) {
+
+  this.utils = new Promise(function(resolve) {
     function uncachedResponse() {
       localStorage.setItem('utils', JSON.stringify({matches: matchesArray, corners: cornersArray}));
       localStorage.setItem('X', X);
       localStorage.setItem('Y', Y);
       resolve(JSON.parse(localStorage.getItem('utils')));
-      return;
+      this.utils = Promise.resolve(this.utils);
     }
     let timer = 0, continueThread = false;
     if (!self.args.caching) {
@@ -222,6 +222,7 @@ const orbify = function(X, Y, args = {}) {
       if (JSON.parse(localStorage.getItem('utils')) &&
       JSON.parse(localStorage.getItem('utils')).matches.length) {
         resolve(JSON.parse(localStorage.getItem('utils')));
+        this.utils = Promise.resolve(this.utils);
       } else {
         setInterval(function() {
           if (!continueThread) {
@@ -229,7 +230,6 @@ const orbify = function(X, Y, args = {}) {
               timer += 1;
               return;
             } else {
-              x++;
               setTimeout(function() {
                 if (continueThread) {
                   return;
@@ -245,6 +245,11 @@ const orbify = function(X, Y, args = {}) {
       }
     }
   });
+  if (cb) {
+    cb(this.utils);
+  } else {
+    console.warn('No callback function supplied');
+  }
 };
 
-window.orbify = orbify;
+window.Matcher = orbify;

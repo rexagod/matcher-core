@@ -7,6 +7,9 @@
     "type": "git",
     "url": "git+https://github.com/rexagod/matcher-core.git"
   },
+  "scripts": {
+    "build": "browserify src/orb.core.js -o orb.core.com.js && terser orb.core.com.js -o orb.core.com.js"
+  },
   "keywords": [
     "publiclab",
     "rexagod",

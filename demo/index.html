@@ -6,15 +6,6 @@
 <script src="../orb.core.com.js"></script>
 <script>
 
-var a;
-
-function getUtils(x) {
-	a = JSON.stringify(x, undefined, 2);
-	document.getElementById('res').innerHTML = a;
-}
-
-Promise.resolve(new orbify('./assets/resources/small.jpg', './assets/resources/big.jpg').utils).then(function (utils) {
-	getUtils(utils); // passing resolved value to callback's scope
-})
+  new Matcher('../assets/resources/small.jpg', '../assets/resources/small.jpg');
 
 </script>
