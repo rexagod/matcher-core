@@ -12,7 +12,6 @@ const {renderMatches} = require('../assets/utils/orb.renderMatches.js');
 
 // ===================ORB-CORE ALGORITHM===================
 const orbify = function(X, Y, cb, args = {}) {
-  // replace by this
   args.browser = args.browser || true;
   args.caching = args.caching || true;
   args.leniency = args.leniency || 30;
@@ -150,7 +149,7 @@ const orbify = function(X, Y, cb, args = {}) {
       if (matchesArray.length && cornersArray.length) {
         return;
       }
-      // window.count++;
+
       window.requestAnimationFrame(tick);
 
       const primaryImageData = ctx.getImageData(0, 0, 640, 480);
@@ -195,7 +194,6 @@ const orbify = function(X, Y, cb, args = {}) {
       options.train_pattern();
     };
 
-    // window.count =0;
     demoApp();
     tick();
   })();
@@ -213,7 +211,7 @@ const orbify = function(X, Y, cb, args = {}) {
       localStorage.setItem('X', X);
       localStorage.setItem('Y', Y);
       resolve(JSON.parse(localStorage.getItem('utils')));
-      this.utils = Promise.resolve(this.utils);
+      return;
     }
     let timer = 0, continueThread = false;
     if (!self.args.caching) {
