@@ -12,8 +12,8 @@ const {renderMatches} = require('../assets/utils/orb.renderMatches.js');
 
 // ===================ORB-CORE ALGORITHM===================
 const orbify = function(X, Y, cb, args = {}) {
-  args.browser = args.browser || true;
-  args.caching = args.caching || true;
+  args.browser = !args.browser ? args.browser : true;
+  args.caching = !args.caching ? args.caching : true;
   args.leniency = args.leniency || 30;
   this.args = args;
   self = this;
