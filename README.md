@@ -63,7 +63,7 @@ const instance = new orbify(<Image>, <Image>, <Object>);
 {matches: Array(9), corners: Array(500)}
 // which are formatted as depicted below
 {
-    "matches": [
+    	"matches": [
         {
             "confidence": {
                 "c1": 63,
