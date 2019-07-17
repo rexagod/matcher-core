@@ -74,16 +74,16 @@ const instance = new orbify(<Image>, <Image>, <Object>);
             "x2": 65,
             "y2": 309,
             "population": 9
-				},
-				...
-		],
-		"corners": [
+	},
+	...
+	],
+	"corners": [
         {
             "x": 37,
             "y": 261
-				},
-				...
-		]
+	},
+	...
+	]
 }
 ```
 **Note:** The coordinates returned above are respective of the **image-pixel space**, hence are independent of their surrounding canvas spaces. In simpler terms, these coordinates actually represent the pixel numbers (*of images in their own x-y spaces*) on both axes in an image, wherever a point of interest is found.
