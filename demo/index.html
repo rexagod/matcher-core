@@ -7,11 +7,12 @@
 <script>
 
   new Matcher('../assets/resources/small.jpg', '../assets/resources/small.jpg',
-    async function (r) {
+    async function onMatchComplete(r) {
+    // display all coordinate pairs of detected corners and rich matches (their subset)
       document.getElementById('res').innerHTML = JSON.stringify(await r);
     }, {
       browser: true,
-      caching: true,
+      caching: true, // stores matched info inside localStorage.utils
       leniency: 30,
       params: {
         lap_thres: 30,
