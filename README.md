@@ -15,25 +15,30 @@
 ## Overview
 
 The process of generating matches takes two phases; `finding` and `matching`. `finding`, 
-or identifying interest points in an image, is run with the `____.findPoints()` method, which accepts
- 2 parameters. It outputs a `points` object, which can be stored for later use. `finding` will take a 
-few hundred milliseconds for a ___ by ____ pixel image.
+or identifying interest points in an image, is done using the `findPoints` method. It passes a `cornersArray` to the global `utils` object's `getPoints` object property, which can be stored for later use. `finding` will take a few hundred milliseconds for images close to 1024 by 768 pixels.
 
-See this example:
+Please note that the the "global `utils` object" mentioned above is returned as a parameter to the callback function from where it can be accessed. See this example:
 
-The output `points` is in the following format:
+```js
+  new Matcher('path/to/image1.png', 'path/to/image2.png',
+    async function (r) { // r here is the passed utils object
+      res = await r;
+      console.log(res.getPoints); // see output below
+    });
+```
+The output `getPoints` is in the following format:
+```
+[{"x":37,"y":261},
+ {"x":482,"y":402},
+ {"x":84,"y":331}, ...]
+```
 
-By setting the `limit` option, you can request a maximum number of points, which will make the
- algorithm run faster. See this example:
-
-...
-
-`matching` is done with the ______ function, which accepts as parameters two `points` objects. 
-It returns a `matches` object with the following format:
-
-
-
-It runs faster/slower than the point `finding` step.... (or something)
+`matching` is done with the `findMatchedPoints` function, passes a `matchesArray` to the global `utils` object's `getMatchedPoints` object property with the following format:
+```
+[{"confidence":{"c1":63,"c2":187},"x1":359,"y1":48,"x2":65,"y2":309,"population":9},
+ {"confidence":{"c1":124,"c2":169},"x1":260,"y1":333,"x2":546,"y2":295,"population":9}, ...]
+```
+It runs slower than the point `finding` step due to the added computational overhead of comparing both of the images for amtches.
 
 ## Setup
 
