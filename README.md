@@ -40,6 +40,23 @@ The output `getPoints` is in the following format:
 ```
 It runs slower than the point `finding` step due to the added computational overhead of comparing both of the images for amtches.
 
+## Params
+
+This library takes a set of different options whose expanded map is provided below. For more information about these options, checkout the `codeflow` section of this documentation below.
+```
+  new Matcher(<Image>, <Image>,
+    <Object(function)>, {
+      caching: <bool>
+      leniency: <Integer>,
+      params: {
+        blur_size: <Integer>
+        matchThreshold: <Integer>
+        lap_thres: <Integer>,
+        eigen_thres: <Integer>
+      }
+    });
+```
+
 ## Setup
 
 * Include the browerified [`orb.core.com.js`](/orb.core.com.js) file inside your [`index.html`](/demo/index.html) using `<script>` tags.
