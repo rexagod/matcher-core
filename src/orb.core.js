@@ -14,7 +14,6 @@ const orbify = function(X, Y, cb, args = {}) {
   args.browser = window !== undefined ? true : false;
   args.caching =
     args.caching == true || args.caching == undefined ? true : false;
-  console.log('Caching', args);
   args.leniency = args.leniency || 30;
   this.args = args;
   self = this;
@@ -202,17 +201,15 @@ const orbify = function(X, Y, cb, args = {}) {
         matches[i] = new matchT();
       }
     }
-    function tick() {
-      if (matchesArray.length && cornersArray.length) {
-        return;
+
+    async function findPoints() {
+      if (await cornersArray.length) {
+        return true;
       }
 
-      window.requestAnimationFrame(tick);
+      window.requestAnimationFrame(findPoints);
 
       const primaryImageData = ctx.getImageData(0, 0, 640, 480);
-
-      let numMatches = 0,
-        goodMatches = 0;
 
       ctx.putImageData(primaryImageData, 0, 0);
       ctx.drawImage(secImage, 0, 0, 640, 480);
@@ -224,7 +221,7 @@ const orbify = function(X, Y, cb, args = {}) {
       jsfeat.yape06.laplacian_threshold = options.lap_thres | 0;
       jsfeat.yape06.min_eigen_value_threshold = options.eigen_thres | 0;
 
-      numCorners = detectKeypoints(imgU8Smooth, screenCorners, 500);
+      numCorners = await detectKeypoints(imgU8Smooth, screenCorners, 500);
 
       jsfeat.orb.describe(
           imgU8Smooth,
@@ -232,43 +229,54 @@ const orbify = function(X, Y, cb, args = {}) {
           numCorners,
           screenDescriptors
       );
-      cornersArray = renderCorners(
+
+      cornersArray = await renderCorners(
           self.args,
           cornersArray,
           screenCorners,
           numCorners
       );
+    }
 
-      if (patternPreview) {
-        numMatches = matchPattern(
-            matches,
-            screenDescriptors,
-            patternDescriptors,
-            numTrainLevels,
-            options
-        );
-        goodMatches = findTransform(
-            matches,
-            numMatches,
-            patternCorners,
-            screenCorners,
-            homo3x3,
-            matchMask
-        );
-      }
-
-      if (numMatches) {
-        if (goodMatches >= (numMatches * self.args.leniency) / 100) {
-          matchesArray = renderMatches(
-              self.args,
-              ctx,
+    async function findMatchedPoints() {
+      let numMatches = 0,
+        goodMatches = 0;
+      if (findPoints()) {
+        if (await matchesArray.length) {
+          return;
+        }
+        requestAnimationFrame(findMatchedPoints);
+        if (patternPreview) {
+          numMatches = await matchPattern(
+              matches,
+              screenDescriptors,
+              patternDescriptors,
+              numTrainLevels,
+              options
+          );
+          goodMatches = await findTransform(
               matches,
               numMatches,
-              screenCorners,
               patternCorners,
-              matchesArray,
+              screenCorners,
+              homo3x3,
               matchMask
           );
+        }
+
+        if (numMatches) {
+          if (goodMatches >= (numMatches * self.args.leniency) / 100) {
+            matchesArray = await renderMatches(
+                self.args,
+                ctx,
+                matches,
+                numMatches,
+                screenCorners,
+                patternCorners,
+                matchesArray,
+                matchMask
+            );
+          }
         }
       }
     }
@@ -291,7 +299,7 @@ const orbify = function(X, Y, cb, args = {}) {
     };
 
     demoApp();
-    tick();
+    findMatchedPoints();
   })();
 
   if (
@@ -324,6 +332,7 @@ const orbify = function(X, Y, cb, args = {}) {
     } else {
       if (
         JSON.parse(localStorage.getItem('utils')) &&
+        JSON.parse(localStorage.getItem('utils')).getPoints.length &&
         JSON.parse(localStorage.getItem('utils')).getMatchedPoints.length
       ) {
         resolve(JSON.parse(localStorage.getItem('utils')));
@@ -331,7 +340,7 @@ const orbify = function(X, Y, cb, args = {}) {
       } else {
         setInterval(function() {
           if (!continueThread) {
-            if (!matchesArray.length) {
+            if (!matchesArray.length || !cornersArray.length) {
               timer += 1;
               return;
             } else {
@@ -350,13 +359,8 @@ const orbify = function(X, Y, cb, args = {}) {
       }
     }
   });
+
   if (cb) {
-    cb.findPoints = function() {
-      return cornersArray;
-    };
-    cb.findMatchedPoints = function() {
-      return matchesArray;
-    };
     cb(this.utils);
   } else {
     console.warn('No callback function supplied');

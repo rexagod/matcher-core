@@ -12,6 +12,29 @@
 - Decorrelates [BRIEF](https://www.cs.ubc.ca/~lowe/525/papers/calonder_eccv10.pdf) features under rotational invariance, leading to better performance in nearest-neighbor applications.
 - Unlike [SURF](https://www.vision.ee.ethz.ch/~surf/eccv06.pdf) and [SIFT(Scale-Invariant Feature Transform)](http://weitz.de/sift/), which are patented algorithms, [ORB](http://www.willowgarage.com/sites/default/files/orb_final.pdf) is free to use.
 
+## Overview
+
+The process of generating matches takes two phases; `finding` and `matching`. `finding`, 
+or identifying interest points in an image, is run with the `____.findPoints()` method, which accepts
+ 2 parameters. It outputs a `points` object, which can be stored for later use. `finding` will take a 
+few hundred milliseconds for a ___ by ____ pixel image.
+
+See this example:
+
+The output `points` is in the following format:
+
+By setting the `limit` option, you can request a maximum number of points, which will make the
+ algorithm run faster. See this example:
+
+...
+
+`matching` is done with the ______ function, which accepts as parameters two `points` objects. 
+It returns a `matches` object with the following format:
+
+
+
+It runs faster/slower than the point `finding` step.... (or something)
+
 ## Setup
 
 * Include the browerified [`orb.core.com.js`](/orb.core.com.js) file inside your [`index.html`](/demo/index.html) using `<script>` tags.

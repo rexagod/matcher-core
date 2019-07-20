@@ -8,8 +8,8 @@
 
   new Matcher('../assets/resources/small.jpg', '../assets/resources/big.jpg',
     async function x(r) {
-      document.getElementById('res').innerHTML = JSON.stringify(await r);
-      console.log(await x.findPoints());
+      res = await r;
+      document.getElementById('res').innerHTML = JSON.stringify(res.getMatchedPoints) + "<hr>" + JSON.stringify(res.getPoints);
     }, {
       leniency: 30,
       params: {
