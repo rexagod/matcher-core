@@ -15,7 +15,7 @@
 ## Overview
 
 The process of generating matches takes two phases; `finding` and `matching`. `finding`, 
-or identifying interest points in an image, is done using the `findPoints` method. It passes a `cornersArray` to the global `utils` object's `getPoints` object property, which can be stored for later use. `finding` will take a few hundred milliseconds for images close to 1024 by 768 pixels.
+or identifying interest points in an image, is done using the [`findPoints`](/src/orb.core.js#L205) method. It passes a `cornersArray` to the global `utils` object's `getPoints` object property, which can be stored for later use. `finding` will take a few hundred milliseconds for images of standard sizes (~ 720p).
 
 Please note that the the "global `utils` object" mentioned above is returned as a parameter to the callback function from where it can be accessed. See this example:
 
@@ -33,7 +33,7 @@ The output `getPoints` is in the following format:
  {"x":84,"y":331}, ...]
 ```
 
-`matching` is done with the `findMatchedPoints` function, passes a `matchesArray` to the global `utils` object's `getMatchedPoints` object property with the following format:
+`matching` is done with the [`findMatchedPoints`](/src/orb.core.js#L241) function, which passes a `matchesArray` to the global `utils` object's `getMatchedPoints` object property with the following format:
 ```
 [{"confidence":{"c1":63,"c2":187},"x1":359,"y1":48,"x2":65,"y2":309,"population":9},
  {"confidence":{"c1":124,"c2":169},"x1":260,"y1":333,"x2":546,"y2":295,"population":9}, ...]
