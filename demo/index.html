@@ -9,7 +9,7 @@
   new Matcher('../assets/resources/small.jpg', '../assets/resources/big.jpg',
     async function x(r) {
       res = await r;
-      document.getElementById('res').innerHTML = JSON.stringify(res.getMatchedPoints) + "<hr>" + JSON.stringify(res.getPoints);
+      document.getElementById('res').innerHTML = JSON.stringify(res.matched_points) + "<hr>" + JSON.stringify(res.points);
     }, {
       leniency: 30,
       params: {
