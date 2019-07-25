@@ -15,6 +15,7 @@ const orbify = function(X, Y, cb, args = {}) {
   args.caching =
     args.caching == true || args.caching == undefined ? true : false;
   args.leniency = args.leniency || 30;
+  args.dimensions = args.dimensions || [640, 480];
   this.args = args;
   self = this;
   const canvas = document.createElement('CANVAS'),
@@ -29,8 +30,8 @@ const orbify = function(X, Y, cb, args = {}) {
   primaryImage.src = resolve(X);
   secImage.src = resolve(Y);
   canvas.setAttribute('id', 'canvas');
-  canvas.setAttribute('width', '640');
-  canvas.setAttribute('height', '480');
+  canvas.setAttribute('width', '"' + self.args.dimensions[0] + '"');
+  canvas.setAttribute('height', '"' + self.args.dimensions[1] + '"');
   c.setAttribute('id', 'myCanvas');
   c.setAttribute('style', 'border:1px solid #d3d3d3');
 
@@ -176,8 +177,8 @@ const orbify = function(X, Y, cb, args = {}) {
     };
 
     function demoApp() {
-      imgU8 = new jsfeat.matrix_t(640, 480, jsfeat.U8_t | jsfeat.C1_t);
-      imgU8Smooth = new jsfeat.matrix_t(640, 480, jsfeat.U8_t | jsfeat.C1_t);
+      imgU8 = new jsfeat.matrix_t(self.args.dimensions[0], self.args.dimensions[1], jsfeat.U8_t | jsfeat.C1_t);
+      imgU8Smooth = new jsfeat.matrix_t(self.args.dimensions[0], self.args.dimensions[1], jsfeat.U8_t | jsfeat.C1_t);
       screenDescriptors = new jsfeat.matrix_t(
           32,
           500,
@@ -195,7 +196,7 @@ const orbify = function(X, Y, cb, args = {}) {
       ctx.fillStyle = 'rgb(0,255,0)';
       ctx.strokeStyle = 'rgb(0,255,0)';
 
-      let i = 640 * 480;
+      let i = self.args.dimensions[0] * self.args.dimensions[1];
       while (--i >= 0) {
         screenCorners[i] = new jsfeat.keypoint_t(0, 0, 0, 0, -1);
         matches[i] = new matchT();
@@ -209,12 +210,12 @@ const orbify = function(X, Y, cb, args = {}) {
 
       window.requestAnimationFrame(findPoints);
 
-      const primaryImageData = ctx.getImageData(0, 0, 640, 480);
+      const primaryImageData = ctx.getImageData(0, 0, self.args.dimensions[0], self.args.dimensions[1]);
 
       ctx.putImageData(primaryImageData, 0, 0);
-      ctx.drawImage(secImage, 0, 0, 640, 480);
+      ctx.drawImage(secImage, 0, 0, self.args.dimensions[0], self.args.dimensions[1]);
 
-      jsfeat.imgproc.grayscale(primaryImageData.data, 640, 480, imgU8);
+      jsfeat.imgproc.grayscale(primaryImageData.data, self.args.dimensions[0], self.args.dimensions[1], imgU8);
 
       jsfeat.imgproc.gaussian_blur(imgU8, imgU8Smooth, options.blur_size | 0);
 
