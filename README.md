@@ -60,7 +60,7 @@ This library takes a set of different options whose expanded map is provided bel
 
 - `caching`: Enables cache mechanism for repetitive point detections. Defaults to `true`.
 - `leniency`: Minimum threshold value for which a point qualifies as a "match". Defaults to `30`%.
-- `dimensions`: Minimum [`pyrdown`ing](https://docs.opencv.org/2.4/doc/tutorials/imgproc/pyramids/pyramids.html) dimensions for image overlays supplied to matcher. Defaults to `[640, 480]`. For more details, [see here](https://github.com/publiclab/matcher-core/issues/2#issuecomment-513613350).
+- `dimensions`: Minimum [`pyrdown`ing](https://docs.opencv.org/2.4/doc/tutorials/imgproc/pyramids/pyramids.html) dimensions for image overlays supplied to matcher. Defaults to `[640, 480]`. For more details, [see here](https://github.com/publiclab/matcher-core/issues/2#issuecomment-513613350). **Also, if you aren't sure about this, we recommend you stick to the defaults.**
 - `params`: Other parameters as indicated in the "codeflow" section of this README.
 
 ## Setup
