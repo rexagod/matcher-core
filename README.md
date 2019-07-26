@@ -40,7 +40,7 @@ The output `getPoints` is in the following format:
 ```
 It runs slower than the point `finding` step due to the added computational overhead of comparing both of the images for matches.
 
-The [`findMatchedPoints`](/src/orb.core.js#L241) function depends upon the values served back into its lexical scope by the [`findPoints`](/src/orb.core.js#) function, which in turn depends upon the `params` argument (see below) supplied by the user, and is solely responsible for the generation of the [`cornersArray`](/src/orb.core.js#233), which is used to instantiate the [`matchesArray`](/src/orb.core.js#L269). The [`findMatchesPoints`](/src/orb.core.js#L241), is [called here](/src/orb.core.js#L302) and the appropriate values are set [in the cache](/src/orb.core.js#L316).
+The [`findMatchedPoints`](/src/orb.core.js#L241) function depends upon the values served back into its lexical scope by the [`findPoints`](/src/orb.core.js#) function, which in turn depends upon the `params` argument (see below) supplied by the user, and is solely responsible for the generation of the [`cornersArray`](/src/orb.core.js#233), which is used to instantiate the [`matchesArray`](/src/orb.core.js#L269). The [`findMatchedPoints`](/src/orb.core.js#L241), is [called here](/src/orb.core.js#L302) and the appropriate values are set [in the cache](/src/orb.core.js#L316).
 
 ## Arguments
 
