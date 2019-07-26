@@ -38,9 +38,11 @@ The output `getPoints` is in the following format:
 [{"confidence":{"c1":63,"c2":187},"x1":359,"y1":48,"x2":65,"y2":309,"population":9},
  {"confidence":{"c1":124,"c2":169},"x1":260,"y1":333,"x2":546,"y2":295,"population":9}, ...]
 ```
-It runs slower than the point `finding` step due to the added computational overhead of comparing both of the images for amtches.
+It runs slower than the point `finding` step due to the added computational overhead of comparing both of the images for matches.
 
-## Params
+The [`findMatchedPoints`](/src/orb.core.js#L241) function depends upon the values served back into its lexical scope by the [`findPoints`](/src/orb.core.js#) function, which in turn depends upon the `params` argument (see below) supplied by the user, and is solely responsible for the generation of the [`cornersArray`](/src/orb.core.js#233), which is used to instantiate the [`matchesArray`](/src/orb.core.js#L269). The [`findMatchesPoints`](/src/orb.core.js#L241), is [called here](/src/orb.core.js#L302) and the appropriate values are set [in the cache](/src/orb.core.js#L316).
+
+## Arguments
 
 This library takes a set of different options whose expanded map is provided below. For more information about these options, checkout the `codeflow` section of this documentation below.
 ```
