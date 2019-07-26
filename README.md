@@ -12,33 +12,80 @@
 - Decorrelates [BRIEF](https://www.cs.ubc.ca/~lowe/525/papers/calonder_eccv10.pdf) features under rotational invariance, leading to better performance in nearest-neighbor applications.
 - Unlike [SURF](https://www.vision.ee.ethz.ch/~surf/eccv06.pdf) and [SIFT(Scale-Invariant Feature Transform)](http://weitz.de/sift/), which are patented algorithms, [ORB](http://www.willowgarage.com/sites/default/files/orb_final.pdf) is free to use.
 
+## Overview
+
+The process of generating matches takes two phases; `finding` and `matching`. `finding`, 
+or identifying interest points in an image, is done using the [`findPoints`](/src/orb.core.js#L205) method. It passes a `cornersArray` to the global `utils` object's `getPoints` object property, which can be stored for later use. `finding` will take a few hundred milliseconds for images of standard sizes (~ 720p).
+
+Please note that the the "global `utils` object" mentioned above is returned as a parameter to the callback function from where it can be accessed. See this example:
+
+```js
+  new Matcher('path/to/image1.png', 'path/to/image2.png',
+    async function (r) { // r here is the passed utils object
+      res = await r;
+      console.log(res.getPoints); // see output below
+    });
+```
+The output `getPoints` is in the following format:
+```
+[{"x":37,"y":261},
+ {"x":482,"y":402},
+ {"x":84,"y":331}, ...]
+```
+
+`matching` is done with the [`findMatchedPoints`](/src/orb.core.js#L241) function, which passes a `matchesArray` to the global `utils` object's `getMatchedPoints` object property with the following format:
+```
+[{"confidence":{"c1":63,"c2":187},"x1":359,"y1":48,"x2":65,"y2":309,"population":9},
+ {"confidence":{"c1":124,"c2":169},"x1":260,"y1":333,"x2":546,"y2":295,"population":9}, ...]
+```
+It runs slower than the point `finding` step due to the added computational overhead of comparing both of the images for amtches.
+
+## Params
+
+This library takes a set of different options whose expanded map is provided below. For more information about these options, checkout the `codeflow` section of this documentation below.
+```
+  new Matcher(<Image>, <Image>,
+    <Object(function)>, {
+      caching: <bool>
+      leniency: <Integer>,
+      dimensions: <Object(array)>,
+      params: {
+        blur_size: <Integer>
+        matchThreshold: <Integer>
+        lap_thres: <Integer>,
+        eigen_thres: <Integer>
+      }
+    });
+```
+
+- `caching`: Enables cache mechanism for repetitive point detections. Defaults to `true`.
+- `leniency`: Minimum threshold value for which a point qualifies as a "match". Defaults to `30`%.
+- `dimensions`: Minimum [`pyrdown`ing](https://docs.opencv.org/2.4/doc/tutorials/imgproc/pyramids/pyramids.html) dimensions for image overlays supplied to matcher. Defaults to `[640, 480]`. For more details, [see here](https://github.com/publiclab/matcher-core/issues/2#issuecomment-513613350). **Also, if you aren't sure about this, we recommend you stick to the defaults.**
+- `params`: Other parameters as indicated in the "codeflow" section of this README.
+
 ## Setup
 
 * Include the browerified [`orb.core.com.js`](/orb.core.com.js) file inside your [`index.html`](/demo/index.html) using `<script>` tags.
 ```html
 <script src="../orb.core.com.js"></script>
 ```
-* The matcher-core library's [entry point file](/matcher.js) will return a promise back into the injected scope. Therefore, one needs to resolve the response and passing it to desired function scope before using it.
+* The matcher-core library's [entry point file](/matcher.js) will return a promise back into the callback's scope.
 ```html
-// Inside index.html
+<script src="../orb.core.min.js"></script>
 <script>
 
-// ...
-
-// Resolving the returned values
-Promise.resolve(new orbify('/path/to/img1.jpg', '/path/to/img2.jpg', {
-	browser: true,	// required for browser (non-node) environments
-	params: {
-		lap_thres: 35,
-		eigen_thres: 40,
-		blur_size: 4,
-		matchThreshold: 50
-	}
-}).utils).then(function (utils) {
-	callback(utils);	// passing resolved value to callback's scope
-});
-
-// ...
+  new Matcher('../assets/resources/small.jpg', '../assets/resources/big.jpg',
+    async function (r) {
+      res = await r;
+      console.log(res.points, res.matched_points);
+    }, {
+      leniency: 30,
+      params: {
+        lap_thres: 30,
+        eigen_thres: 35
+      }
+    }
+  );
 
 </script>
 ```
@@ -52,7 +99,7 @@ The implementation snippet above was taken from [here](/demo/index.html).
 * thresholds, as specified in the example
 * above.
 */
-const instance = new orbify(<Image>, <Image>, <Object>);
+const instance = new orbify(<Image>, <Image>, <Object>, <Object>);
 ```
 * Similarly, `matcher-core`'s `orbify` will output the following data.
 ```js
@@ -63,26 +110,26 @@ const instance = new orbify(<Image>, <Image>, <Object>);
 {matches: Array(9), corners: Array(500)}
 // which are formatted as depicted below
 {
-    	"matches": [
-        {
-            "confidence": {
-                "c1": 63,
-                "c2": 187
-            },
-            "x1": 359,
-            "y1": 48,
-            "x2": 65,
-            "y2": 309,
-            "population": 9
-	},
-	...
+  "matches": [
+    {
+      "confidence": {
+        "c1": 63,
+        "c2": 187
+      },
+      "x1": 359,
+      "y1": 48,
+      "x2": 65,
+      "y2": 309,
+      "population": 9
+		},
+		...
 	],
 	"corners": [
-        {
-            "x": 37,
-            "y": 261
-	},
-	...
+    {
+      "x": 37,
+      "y": 261
+		},
+		...
 	]
 }
 ```
@@ -95,9 +142,8 @@ The live-demonstration of an [example file](/demo/index.html) using this library
 ## Building from source
 
 - To build modified source files, do:
-	- `npm i -g browserify` to globally install [browserify](https://www.npmjs.com/package/browserify).
-	- `browserify src -o orb.core.com.js` to build from the [`/src`](/src) directory.
-	- Use the newly browserified [`orb.com.core.js`](/orb.com.core.js) file as the entry point.
+	- Build using `npm run build`.
+	- Use the newly browserified/minified [`orb.com.min.js`](/orb.com.min.js) file as the entry point.
 
 ## Codeflow
 

@@ -1,23 +1,22 @@
 <body style="font-family:monospace; color: whitesmoke;background-color: black">
-<h2>&gt;&nbsp;orb-core: processing...</h2>
-<h3 id='res' style="color: chartreuse"></h3>
+  <h2>&gt;&nbsp;orb-core: processing...</h2>
+  <h3 id='res' style="color: chartreuse"></h3>
 </body>
 
-<script src="../orb.core.com.js"></script>
+<script src="../orb.core.min.js"></script>
 <script>
 
-  new Matcher('../assets/resources/small.jpg', '../assets/resources/small.jpg',
-    async function onMatchComplete(r) {
-    // display all coordinate pairs of detected corners and rich matches (their subset)
-      document.getElementById('res').innerHTML = JSON.stringify(await r);
+  new Matcher('../assets/resources/small.jpg', '../assets/resources/big.jpg',
+    async function x(r) {
+      res = await r;
+      document.getElementById('res').innerHTML = JSON.stringify(res.matched_points) + "<hr>" + JSON.stringify(res.points);
     }, {
-      browser: true,
-      caching: true, // stores matched info inside localStorage.utils
       leniency: 30,
       params: {
         lap_thres: 30,
         eigen_thres: 35
       }
-    });
+    }
+  );
 
 </script>
