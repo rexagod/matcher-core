@@ -48,8 +48,10 @@ This library takes a set of different options whose expanded map is provided bel
 ```
   new Matcher(<Image>, <Image>,
     <Object(function)>, {
-      caching: <bool>
+      browser: <bool>,
+      caching: <bool>,
       leniency: <Integer>,
+      dimensions: <Object(array)>,
       params: {
         blur_size: <Integer>
         matchThreshold: <Integer>
@@ -58,6 +60,11 @@ This library takes a set of different options whose expanded map is provided bel
       }
     });
 ```
+- `browser`: NOT OPTIONAL. Set to `true` for regular in-browser usage. `false` is used for debug purposes (prints results in the console).
+- `caching`: Enables cache mechanism for repetitive point detections. Defaults to `true`.
+- `leniency`: Minimum threshold value for which a point qualifies as a "match". Defaults to `30`%.
+- `dimensions`: Minimum [`pyrdown`ing](https://docs.opencv.org/2.4/doc/tutorials/imgproc/pyramids/pyramids.html) dimensions for image overlays supplied to matcher. Defaults to `[640, 480]`. For more details, [see here](https://github.com/publiclab/matcher-core/issues/2#issuecomment-513613350). **Also, if you aren't sure about this, we recommend you stick to the defaults.**
+- `params`: Other parameters as indicated in the "codeflow" section of this README.
 
 ## Setup
 
@@ -65,27 +72,23 @@ This library takes a set of different options whose expanded map is provided bel
 ```html
 <script src="../orb.core.com.js"></script>
 ```
-* The matcher-core library's [entry point file](/matcher.js) will return a promise back into the injected scope. Therefore, one needs to resolve the response and passing it to desired function scope before using it.
+* The matcher-core library's [entry point file](/matcher.js) will return a promise back into the callback's scope.
 ```html
-// Inside index.html
+<script src="../orb.core.min.js"></script>
 <script>
 
-// ...
-
-// Resolving the returned values
-Promise.resolve(new orbify('/path/to/img1.jpg', '/path/to/img2.jpg', {
-	browser: true,	// required for browser (non-node) environments
-	params: {
-		lap_thres: 35,
-		eigen_thres: 40,
-		blur_size: 4,
-		matchThreshold: 50
-	}
-}).utils).then(function (utils) {
-	callback(utils);	// passing resolved value to callback's scope
-});
-
-// ...
+  new Matcher('../assets/resources/small.jpg', '../assets/resources/big.jpg',
+    async function (r) {
+      res = await r;
+      console.log(res.points, res.matched_points);
+    }, {
+      leniency: 30,
+      params: {
+        lap_thres: 30,
+        eigen_thres: 35
+      }
+    }
+  );
 
 </script>
 ```
@@ -99,7 +102,7 @@ The implementation snippet above was taken from [here](/demo/index.html).
 * thresholds, as specified in the example
 * above.
 */
-const instance = new orbify(<Image>, <Image>, <Object>);
+const instance = new orbify(<Image>, <Image>, <Object>, <Object>);
 ```
 * Similarly, `matcher-core`'s `orbify` will output the following data.
 ```js
@@ -110,27 +113,27 @@ const instance = new orbify(<Image>, <Image>, <Object>);
 {matches: Array(9), corners: Array(500)}
 // which are formatted as depicted below
 {
-    "matches": [
-        {
-            "confidence": {
-                "c1": 63,
-                "c2": 187
-            },
-            "x1": 359,
-            "y1": 48,
-            "x2": 65,
-            "y2": 309,
-            "population": 9
-				},
-				...
-		],
-		"corners": [
-        {
-            "x": 37,
-            "y": 261
-				},
-				...
-		]
+  "matches": [
+    {
+      "confidence": {
+        "c1": 63,
+        "c2": 187
+      },
+      "x1": 359,
+      "y1": 48,
+      "x2": 65,
+      "y2": 309,
+      "population": 9
+		},
+		...
+	],
+	"corners": [
+    {
+      "x": 37,
+      "y": 261
+		},
+		...
+	]
 }
 ```
 **Note:** The coordinates returned above are respective of the **image-pixel space**, hence are independent of their surrounding canvas spaces. In simpler terms, these coordinates actually represent the pixel numbers (*of images in their own x-y spaces*) on both axes in an image, wherever a point of interest is found.
@@ -142,9 +145,8 @@ The live-demonstration of an [example file](/demo/index.html) using this library
 ## Building from source
 
 - To build modified source files, do:
-	- `npm i -g browserify` to globally install [browserify](https://www.npmjs.com/package/browserify).
-	- `browserify src -o orb.core.com.js` to build from the [`/src`](/src) directory.
-	- Use the newly browserified [`orb.com.core.js`](/orb.com.core.js) file as the entry point.
+  - Build using `npm run build`.
+	- Use the newly browserified [`orb.com.min.js`](/orb.com.min.js) file as the entry point.
 
 ## Codeflow
 

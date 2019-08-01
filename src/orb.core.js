@@ -11,10 +11,10 @@ const {renderMatches} = require('../assets/utils/orb.renderMatches.js');
 
 // ===================ORB-CORE ALGORITHM===================
 const orbify = function(X, Y, cb, args = {}) {
-  args.browser = window !== undefined ? true : false;
   args.caching =
     args.caching == true || args.caching == undefined ? true : false;
   args.leniency = args.leniency || 30;
+  args.dimensions = args.dimensions || [640, 480],
   this.args = args;
   self = this;
   const canvas = document.createElement('CANVAS'),
@@ -29,8 +29,8 @@ const orbify = function(X, Y, cb, args = {}) {
   primaryImage.src = resolve(X);
   secImage.src = resolve(Y);
   canvas.setAttribute('id', 'canvas');
-  canvas.setAttribute('width', '640');
-  canvas.setAttribute('height', '480');
+  canvas.setAttribute('width', self.args.dimensions[0]);
+  canvas.setAttribute('height', self.args.dimensions[1]);
   c.setAttribute('id', 'myCanvas');
   c.setAttribute('style', 'border:1px solid #d3d3d3');
 
