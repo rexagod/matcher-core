@@ -38,15 +38,18 @@ The output `getPoints` is in the following format:
 [{"confidence":{"c1":63,"c2":187},"x1":359,"y1":48,"x2":65,"y2":309,"population":9},
  {"confidence":{"c1":124,"c2":169},"x1":260,"y1":333,"x2":546,"y2":295,"population":9}, ...]
 ```
-It runs slower than the point `finding` step due to the added computational overhead of comparing both of the images for amtches.
+It runs slower than the point `finding` step due to the added computational overhead of comparing both of the images for matches.
 
-## Params
+The [`findMatchedPoints`](/src/orb.core.js#L241) function depends upon the values served back into its lexical scope by the [`findPoints`](/src/orb.core.js#) function, which in turn depends upon the `params` argument (see below) supplied by the user, and is solely responsible for the generation of the [`cornersArray`](/src/orb.core.js#233), which is used to instantiate the [`matchesArray`](/src/orb.core.js#L269). The [`findMatchedPoints`](/src/orb.core.js#L241), is [called here](/src/orb.core.js#L302) and the appropriate values are set [in the cache](/src/orb.core.js#L316).
+
+## Arguments
 
 This library takes a set of different options whose expanded map is provided below. For more information about these options, checkout the `codeflow` section of this documentation below.
 ```
   new Matcher(<Image>, <Image>,
     <Object(function)>, {
-      caching: <bool>
+      browser: <bool>,
+      caching: <bool>,
       leniency: <Integer>,
       dimensions: <Object(array)>,
       params: {
@@ -57,6 +60,11 @@ This library takes a set of different options whose expanded map is provided bel
       }
     });
 ```
+- `browser`: NOT OPTIONAL. Set to `true` for regular in-browser usage. `false` is used for debug purposes (prints results in the console).
+- `caching`: Enables cache mechanism for repetitive point detections. Defaults to `true`.
+- `leniency`: Minimum threshold value for which a point qualifies as a "match". Defaults to `30`%.
+- `dimensions`: Minimum [`pyrdown`ing](https://docs.opencv.org/2.4/doc/tutorials/imgproc/pyramids/pyramids.html) dimensions for image overlays supplied to matcher. Defaults to `[640, 480]`. For more details, [see here](https://github.com/publiclab/matcher-core/issues/2#issuecomment-513613350). **Also, if you aren't sure about this, we recommend you stick to the defaults.**
+- `params`: Other parameters as indicated in the "codeflow" section of this README.
 
 - `caching`: Enables cache mechanism for repetitive point detections. Defaults to `true`.
 - `leniency`: Minimum threshold value for which a point qualifies as a "match". Defaults to `30`%.
@@ -142,8 +150,8 @@ The live-demonstration of an [example file](/demo/index.html) using this library
 ## Building from source
 
 - To build modified source files, do:
-	- Build using `npm run build`.
-	- Use the newly browserified/minified [`orb.com.min.js`](/orb.com.min.js) file as the entry point.
+  - Build using `npm run build`.
+	- Use the newly browserified and minified [`orb.com.min.js`](/orb.com.min.js) file as the entry point.
 
 ## Codeflow
 

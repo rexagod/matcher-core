@@ -7,10 +7,11 @@
 <script>
 
   new Matcher('../assets/resources/small.jpg', '../assets/resources/big.jpg',
-    async function x(r) {
+    async function (r) {
       res = await r;
       document.getElementById('res').innerHTML = JSON.stringify(res.matched_points) + "<hr>" + JSON.stringify(res.points);
     }, {
+      browser: true,
       leniency: 30,
       params: {
         lap_thres: 30,
