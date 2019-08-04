@@ -309,6 +309,7 @@ const orbify = function(X, Y, cb, args = {}) {
     (localStorage.getItem('Y') !== X && localStorage.getItem('Y') !== Y)
   ) {
     localStorage.removeItem('utils');
+    window.data = null;
   }
 
   this.utils = new Promise(function(resolve) {
@@ -337,6 +338,11 @@ const orbify = function(X, Y, cb, args = {}) {
         JSON.parse(localStorage.getItem('utils')).matched_points &&
         JSON.parse(localStorage.getItem('utils')).matched_points.length
       ) {
+        // second iteration
+        window.data = {
+          points: cornersArray,
+          matched_points: matchesArray,
+        };
         resolve(JSON.parse(localStorage.getItem('utils')));
         this.utils = Promise.resolve(this.utils);
       } else {
@@ -350,6 +356,11 @@ const orbify = function(X, Y, cb, args = {}) {
                 if (continueThread) {
                   return;
                 }
+                // first iteration
+                window.data = {
+                  points: cornersArray,
+                  matched_points: matchesArray,
+                };
                 uncachedResponse();
                 continueThread = true;
               }, timer);
