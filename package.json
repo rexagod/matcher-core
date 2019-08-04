@@ -34,9 +34,7 @@
   },
   "homepage": "https://github.com/rexagod/matcher-core#readme",
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
+    "chromeless": "^1.5.2",
     "live-server": "^1.2.1"
   }
 }

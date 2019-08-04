@@ -1,36 +1,32 @@
+const {Chromeless} = require('chromeless');
 const liveServer = require('live-server');
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const app = express();
-
-let response = null;
-
-app.use(cors());
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
-app.use(bodyParser.json({type: 'application/vnd.api+json'}));
-
-app.get('/', function(req, res) {
-  res.send('{"X":"../assets/resources/small.jpg", "Y":"../assets/resources/big.jpg"}');
-});
-
-app.use(function(req, res, next) {
-  response = req.body;
-  console.log(response);
-  next();
-});
-
-app.listen(9993);
-
 const params = {
-  port: 9991,
+  port: 9090,
   host: '127.0.0.1',
   root: '.',
-  open: false, // user's intervention
+  open: false,
   mount: [['./node_modules', './node_modules']],
-  logLevel: 2,
+  logLevel: 0,
 };
+
+console.log('Getting results...');
 liveServer.start(params);
 
-module.exports = response;
+async function deploy() {
+  const chromeless = new Chromeless({
+    debug: true,
+    launchChrome: false,
+  });
+  response = await chromeless
+      .goto('http://localhost:9090/demo/node.html')
+      .wait(1000)
+      .wait('h3')
+      .evaluate(async function() {
+        return await window.data; // try console?
+      });
+  chromeless.end();
+  liveServer.shutdown();
+  return response;
+}
+
+module.exports = deploy();

@@ -1,0 +1,23 @@
+<body style="font-family:monospace; color: whitesmoke;background-color: black">
+  <h2>&gt;&nbsp;orb-core: processing...</h2>
+  <h3 id='res' style="color: chartreuse"></h3>
+</body>
+
+<script src="../orb.core.min.js"></script>
+<script>
+
+new Matcher('../assets/resources/small.jpg', "../assets/resources/big.jpg",
+        async function (r) {
+          res = await r;
+          document.getElementById('res').innerHTML = JSON.stringify(res.matched_points) + "<hr>" + JSON.stringify(res.points);
+        }, {
+          browser: false,
+          leniency: 30,
+          params: {
+            lap_thres: 30,
+            eigen_thres: 35
+          }
+        }
+      );
+
+</script>
