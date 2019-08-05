@@ -1,32 +1,46 @@
+const chromeLauncher = require('chrome-launcher');
 const {Chromeless} = require('chromeless');
 const liveServer = require('live-server');
-const params = {
-  port: 9090,
-  host: '127.0.0.1',
-  root: '.',
-  open: false,
-  mount: [['./node_modules', './node_modules']],
-  logLevel: 0,
-};
+const express = require('express');
+const cors = require('cors');
 
-console.log('Getting results...');
-liveServer.start(params);
+const app = express();
+
+const XY = global.XY;
+
+app.use(cors());
+
+app.get('/', function(req, res) {
+  res.send(`{"X": "${XY[0]}", "Y": "${XY[1]}"}`); // append to "global" object
+});
+
+app.listen(9992);
+
+liveServer.start({
+  open: false,
+});
 
 async function deploy() {
+  await chromeLauncher.launch({
+    port: 9222,
+    chromeFlags: ['--remote-debugging-port=9222', '--headless'],
+  });
   const chromeless = new Chromeless({
     debug: true,
     launchChrome: false,
   });
   response = await chromeless
-      .goto('http://localhost:9090/demo/node.html')
-      .wait(1000)
+      .goto('http://localhost:8080/demo/index.html')
       .wait('h3')
-      .evaluate(async function() {
-        return await window.data; // try console?
+      .wait(1000)
+      .evaluate(function() {
+        return document.querySelector('#res').textContent;
       });
   chromeless.end();
   liveServer.shutdown();
   return response;
 }
 
-module.exports = deploy();
+module.exports = deploy().catch(function(e) {
+  console.error(e);
+});

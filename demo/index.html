@@ -6,18 +6,22 @@
 <script src="../orb.core.min.js"></script>
 <script>
 
-  var url = 'http://127.0.0.1:9993';
+  var url = 'http://localhost:9992'
 
   fetch(url)
-
-    .then(res => res.json())
-    .then(function (resj) {
-      console.log(resj);
-      new Matcher(resj.X, resj.Y,
-        async function (r) {
-          res = await r;
+    .then(async function (res) {
+      return await res.json();
+    }).catch(function(e){
+      console.error(e);
+    })
+    .then(async function (r) {
+      console.log(r);
+      new Matcher(r.X, r.Y,
+        async function (q) {
+          var res = await q;
           document.getElementById('res').innerHTML = JSON.stringify(res.matched_points) + "<hr>" + JSON.stringify(res.points);
-        }, {
+        },
+        {
           browser: true,
           leniency: 30,
           params: {
@@ -26,21 +30,8 @@
           }
         }
       );
-    })
-    .then(
-      function respond() {
-        fetch(url, {
-          method: 'POST',
-          body: JSON.stringify(localStorage),
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          }
-        }).then(function(){
-          console.log('done');
-        });
-      }
-    );
-
+    }).catch(function(e){
+      console.error(e);
+    });
 
 </script>
