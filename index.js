@@ -1,46 +1,52 @@
 const chromeLauncher = require('chrome-launcher');
-const {Chromeless} = require('chromeless');
+const CRI = require('chrome-remote-interface');
 const liveServer = require('live-server');
-const express = require('express');
-const cors = require('cors');
+const ejs = require('ejs');
+const fs = require('fs');
 
-const app = express();
-
-const XY = global.XY;
-
-app.use(cors());
-
-app.get('/', function(req, res) {
-  res.send(`{"X": "${XY[0]}", "Y": "${XY[1]}"}`); // append to "global" object
-});
-
-app.listen(9992);
-
-liveServer.start({
-  open: false,
-});
-
-async function deploy() {
+(async function () {
   await chromeLauncher.launch({
     port: 9222,
     chromeFlags: ['--remote-debugging-port=9222', '--headless'],
   });
-  const chromeless = new Chromeless({
-    debug: true,
-    launchChrome: false,
-  });
-  response = await chromeless
-      .goto('http://localhost:8080/demo/index.html')
-      .wait('h3')
-      .wait(1000)
-      .evaluate(function() {
-        return document.querySelector('#res').textContent;
-      });
-  chromeless.end();
-  liveServer.shutdown();
-  return response;
-}
+})();
 
-module.exports = deploy().catch(function(e) {
-  console.error(e);
+const XY = ['../assets/resources/small.jpg', '../assets/resources/big.jpg'];
+
+liveServer.start({
+  open: false,
+  port: 9097
+});
+
+
+ejs.renderFile('./demo/template.html.ejs', {X:XY[0], Y:XY[1]}, function(err, str) {
+  if(err) console.error(err);
+  fs.writeFile('./demo/index.html', str, function(err){
+    if(err) console.error(err);
+  })
+});
+
+CRI((client) => {
+
+  const {Page, Runtime} = client;
+
+  Promise.all([
+    Page.enable()
+  ]).then(() => {
+    return Page.navigate({url: 'http://localhost:9097/demo/index.html'});
+  });
+
+  Page.loadEventFired(() => {
+      Runtime.evaluate({expression: 'document.getElementById("res").innerHTML'})
+      .then((result) => {
+        client.close();
+        liveServer.shutdown();
+        console.log(result.result.value);
+        process.exit();
+      });
+  });
+
+})
+.on('error', (err) => {
+  console.error('Cannot connect to browser:', err);
 });

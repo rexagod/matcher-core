@@ -8,6 +8,7 @@
     "url": "git+https://github.com/rexagod/matcher-core.git"
   },
   "scripts": {
+    "get:deps": "sudo apt install libxss1 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxfixes3 libxi6 libxtst6 libnss3 libgconf-2-4 libxrandr2 libasound2 libatk1.0-0 libgtk2.0-0 libgtk-3-0 libxinerama1 libcairo-gobject2",
     "build": "./node_modules/browserify/bin/cmd.js src/orb.core.js -o orb.core.min.js && ./node_modules/terser/bin/uglifyjs orb.core.min.js -o orb.core.min.js"
   },
   "keywords": [
@@ -34,10 +35,13 @@
   },
   "homepage": "https://github.com/rexagod/matcher-core#readme",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "chrome-launcher": "^0.11.2",
-    "chromeless": "^1.5.2",
+    "chrome-remote-interface": "^0.27.2",
     "cors": "^2.8.5",
+    "ejs": "^2.6.2",
     "express": "^4.17.1",
-    "live-server": "^1.2.1"
+    "live-server": "^1.2.1",
+    "puppeteer": "^1.19.0"
   }
 }
