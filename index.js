@@ -11,7 +11,7 @@ const fs = require('fs');
   });
 })();
 
-const XY = ['../assets/resources/small.jpg', '../assets/resources/big.jpg'];
+const XY = global.XY || ['../assets/resources/small.jpg', '../assets/resources/big.jpg'];
 
 liveServer.start({
   open: false,
