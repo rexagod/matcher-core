@@ -1,5 +1,5 @@
-var x = require('./runner')
+var matcher = require('./runner')
 
-x(function(err, out, code){
-  console.log(out.trim());
+matcher(function(err, out, code){
+  console.log(out);
 });

@@ -8,7 +8,8 @@
     "url": "git+https://github.com/rexagod/matcher-core.git"
   },
   "scripts": {
-    "get:deps": "sudo apt install libxss1 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxfixes3 libxi6 libxtst6 libnss3 libgconf-2-4 libxrandr2 libasound2 libatk1.0-0 libgtk2.0-0 libgtk-3-0 libxinerama1 libcairo-gobject2",
+    "fetch": "sudo apt install libxss1 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxfixes3 libxi6 libxtst6 libnss3 libgconf-2-4 libxrandr2 libasound2 libatk1.0-0 libgtk2.0-0 libgtk-3-0 libxinerama1 libcairo-gobject2",
+    "test": "node_modules/jest/bin/jest.js --detectOpenHandles",
     "build": "./node_modules/browserify/bin/cmd.js src/orb.core.js -o orb.core.min.js && ./node_modules/terser/bin/uglifyjs orb.core.min.js -o orb.core.min.js"
   },
   "keywords": [
@@ -31,6 +32,7 @@
     "browserify": "^16.3.0",
     "eslint": "^5.16.0",
     "eslint-config-google": "^0.13.0",
+    "jest": "^24.9.0",
     "terser": "^4.1.2"
   },
   "homepage": "https://github.com/rexagod/matcher-core#readme",
@@ -38,6 +40,6 @@
     "chrome-launcher": "^0.11.2",
     "chrome-remote-interface": "^0.27.2",
     "ejs": "^2.6.2",
-    "live-server": "^1.2.1",
+    "live-server": "^1.2.1"
   }
 }
