@@ -1,0 +1,11 @@
+sudo: required
+language: node_js
+node_js:
+  - '8'
+  - '10'
+before_script:
+  - npm i
+  - npm run fetch
+  - npm run build
+script:
+  - npm test
