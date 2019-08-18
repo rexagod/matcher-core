@@ -14,26 +14,27 @@
 
 ## Overview
 
-The process of generating matches takes two phases; `finding` and `matching`. `finding`, 
-or identifying interest points in an image, is done using the [`findPoints`](/src/orb.core.js#L205) method. It passes a `cornersArray` to the global `utils` object's `getPoints` object property, which can be stored for later use. `finding` will take a few hundred milliseconds for images of standard sizes (~ 720p).
+The process of generating matches takes two phases; `finding` and `matching`. `finding`,
+or identifying interest points in an image, is done using the [`findPoints`](/src/orb.core.js#L205) method. It passes a `cornersArray` to the global `utils` object's `getPoints` object property, which can be stored for later use. `finding` will take a few hundred milliseconds for images of standard sizes (~720p).
 
-Please note that the the "global `utils` object" mentioned above is returned as a parameter to the callback function from where it can be accessed. See this example:
+Please note that the "global `utils` object" mentioned above is returned as a parameter to the callback function from where it can be accessed. See this example:
 
 ```js
   new Matcher('path/to/image1.png', 'path/to/image2.png',
     async function (r) { // r here is the passed utils object
       res = await r;
-      console.log(res.getPoints); // see output below
+      console.log(res.points);
+      console.log(res.matched_points);
     });
 ```
-The output `getPoints` is in the following format:
+The output (`res.points`) is in the following format:
 ```
 [{"x":37,"y":261},
  {"x":482,"y":402},
  {"x":84,"y":331}, ...]
 ```
 
-`matching` is done with the [`findMatchedPoints`](/src/orb.core.js#L241) function, which passes a `matchesArray` to the global `utils` object's `getMatchedPoints` object property with the following format:
+`matching` is done with the [`findMatchedPoints`](/src/orb.core.js#L241) function, which passes a `matchesArray` to the global `utils` object's `matched_points` object property with the following format (`res.matched_points`):
 ```
 [{"confidence":{"c1":63,"c2":187},"x1":359,"y1":48,"x2":65,"y2":309,"population":9},
  {"confidence":{"c1":124,"c2":169},"x1":260,"y1":333,"x2":546,"y2":295,"population":9}, ...]
@@ -47,9 +48,9 @@ The [`findMatchedPoints`](/src/orb.core.js#L241) function depends upon the value
 This library takes a set of different options whose expanded map is provided below. For more information about these options, checkout the `codeflow` section of this documentation below.
 ```
   new Matcher(<Image>, <Image>,
-    <Object(function)>, {
-      browser: <bool>,
-      caching: <bool>,
+    <Object(callback)>, {
+      query: <String>,
+      caching: <Bool>,
       leniency: <Integer>,
       dimensions: <Object(array)>,
       params: {
@@ -60,32 +61,42 @@ This library takes a set of different options whose expanded map is provided bel
       }
     });
 ```
-- `browser`: NOT OPTIONAL. Set to `true` for regular in-browser usage. `false` is used for debug purposes (prints results in the console).
+All arguments other than the ones mentioned below (images and callback function) are required to be initialized.
+- `query`: Set to 'corners' in order for the matcher to **only** run the `findPoints` method and output the detected points thus avoiding overhead of filtering the matched points (i.e., running the `findMatchedPoints` method) among them.
 - `caching`: Enables cache mechanism for repetitive point detections. Defaults to `true`.
-- `leniency`: Minimum threshold value for which a point qualifies as a "match". Defaults to `30`%.
-- `dimensions`: Minimum [`pyrdown`ing](https://docs.opencv.org/2.4/doc/tutorials/imgproc/pyramids/pyramids.html) dimensions for image overlays supplied to matcher. Defaults to `[640, 480]`. For more details, [see here](https://github.com/publiclab/matcher-core/issues/2#issuecomment-513613350). **Also, if you aren't sure about this, we recommend you stick to the defaults.**
-- `params`: Other parameters as indicated in the "codeflow" section of this README.
-
-- `caching`: Enables cache mechanism for repetitive point detections. Defaults to `true`.
-- `leniency`: Minimum threshold value for which a point qualifies as a "match". Defaults to `30`%.
+- `leniency`: Minimum threshold value for which a point qualifies as a "match". Defaults to `30`% (percentage).
 - `dimensions`: Minimum [`pyrdown`ing](https://docs.opencv.org/2.4/doc/tutorials/imgproc/pyramids/pyramids.html) dimensions for image overlays supplied to matcher. Defaults to `[640, 480]`. For more details, [see here](https://github.com/publiclab/matcher-core/issues/2#issuecomment-513613350). **Also, if you aren't sure about this, we recommend you stick to the defaults.**
 - `params`: Other parameters as indicated in the "codeflow" section of this README.
 
 ## Setup
 
+### Node
+
+* As done in [example.js]('/example.js'), in order to run this library and get results in a node environment, you need to initialize a callback function that takes in three arguments, namely err(error), out(output), and code(exit code).
+
+```js
+function callback(err, out, code) { /* ... */ }
+```
+
+* After that, just pass that in your matcher's node instance and you're good to go.
+
+```js
+require('./runner')(callback);
+```
+
+### Browser
+
 * Include the browerified [`orb.core.com.js`](/orb.core.com.js) file inside your [`index.html`](/demo/index.html) using `<script>` tags.
 ```html
-<script src="../orb.core.com.js"></script>
+<script src="orb.core.com.js"></script>
 ```
-* The matcher-core library's [entry point file](/matcher.js) will return a promise back into the callback's scope.
-```html
-<script src="../orb.core.min.js"></script>
-<script>
+* The matcher-core library's [entry point file](/src/orb.core.js) will return a promise back into the callback's scope.
+```js
 
-  new Matcher('../assets/resources/small.jpg', '../assets/resources/big.jpg',
+  new Matcher('imageX.jpg', 'imageY.jpg',
     async function (r) {
       res = await r;
-      console.log(res.points, res.matched_points);
+      console.log(res);
     }, {
       leniency: 30,
       params: {
@@ -94,29 +105,26 @@ This library takes a set of different options whose expanded map is provided bel
       }
     }
   );
+```
 
-</script>
-```
-The implementation snippet above was taken from [here](/demo/index.html).
-* `matcher-core`'s `orbify` will accept the following format of input parameters.
+### Extra
+
+* `matcher-core`'s internal `orbify` will accept the following format of input parameters.
+
 ```js
-/* Object here represents the `args` object
-* which consists of a "browser" field, and
-* an additional "params" object that specifies
-* different image filters' limits and
-* thresholds, as specified in the example
-* above.
-*/
 const instance = new orbify(<Image>, <Image>, <Object>, <Object>);
+                        /*  ImageX^  ImageY^  callback^   args^ */
 ```
-* Similarly, `matcher-core`'s `orbify` will output the following data.
+* Similarly, `matcher-core`'s `orbify` will (collectively, i.e., when `query` is not `corners`) output the following data.
+
 ```js
-/* returns a set of detected corners
+/*
+* returns a set of detected corners
 * and the set of 'rich' matches that
 * are evaluated from it
 */
-{matches: Array(9), corners: Array(500)}
-// which are formatted as depicted below
+> {points: Array(9), matched_points: Array(500)}
+/* which are formatted as depicted below */
 {
   "matches": [
     {
@@ -145,17 +153,16 @@ const instance = new orbify(<Image>, <Image>, <Object>, <Object>);
 
 ## Demonstration
 
-The live-demonstration of an [example file](/demo/index.html) using this library can be found on the `gh-pages` branch deployed [here](https://rexagod.github.io/matcher-core/demo/).
+The live-demonstration of library can be found on the `gh-pages` branch deployed [here](https://publiclab.github.io/matcher-core/).
 
 ## Building from source
 
-- To build modified source files, do:
-  - Build using `npm run build`.
-	- Use the newly browserified and minified [`orb.com.min.js`](/orb.com.min.js) file as the entry point.
+- Build using `npm run build`.
+- Use the newly browserified and minified [`orb.com.min.js`](/orb.com.min.js) file as the entry point.
 
 ## Codeflow
 
-Below is a summary of each component of the [`orbify`](/orb.core.com.js#L14) instance, which is the at the core of this library, that returns a promise, and this should be kept in mind while extending the repository into one's own.
+Below is a summary of each component of the [`orbify`](/orb.core.com.js#L14) function, which is the at the core of this library and returns a promise, which should be kept in mind while extending the repository into one's own.
 
 * [`canvas Mock`](/orb.core.com.js#L15-L28): Sets up two mock canvases for image comparison, which are never really appended to the DOM tree, along with some global variables.
 
@@ -163,7 +170,7 @@ Below is a summary of each component of the [`orbify`](/orb.core.com.js#L14) ins
 
 * [`matchT structure`](/orb.core.com.js#L35-L55): An IIFE that initializes four basic parameters, namely, `screenIdx`, `patternLev`, `patternIdx`, and `distance` for the comparision structure. These are used later on in the `orbify` function to store the array of corners in the first image, number of discernable levels in the second image, array of corners in the second image, and the distance between the two indices, respectively. The default values for all of these, is set to 0.
 
-* [`demoOpt trainer`](/orb.core.com.js#L57-L119): Initializes four adjustable filters namely, `blur_size`, `lap_thres`, `eigen_thres`, and `matchThreshold`, along with the `train_pattern` trainer function. The functions of these parameters *respectively* are as follows. 
+* [`demoOpt trainer`](/orb.core.com.js#L57-L119): Initializes four adjustable filters namely, `blur_size`, `lap_thres`, `eigen_thres`, and `matchThreshold`, along with the `train_pattern` trainer function. The functions of these parameters *respectively* are as follows.
 
 	* Adjusting the blur on images to incorporate more corners for better detection or reducing them to focus on the dominant matches only.
 	* Defining the rate of change of intensity of the pixels for them to be perceived as "noisy".

@@ -11,6 +11,7 @@ const {renderMatches} = require('../assets/utils/orb.renderMatches.js');
 
 // ===================ORB-CORE ALGORITHM===================
 const orbify = function(X, Y, cb, args = {}) {
+  args.browser = true;
   args.caching =
     args.caching == true || args.caching == undefined ? true : false;
   args.leniency = args.leniency || 30;
@@ -299,7 +300,11 @@ const orbify = function(X, Y, cb, args = {}) {
     };
 
     demoApp();
-    findMatchedPoints();
+    if(args.query === 'corners') {
+      eval('findPoints()');
+    } else {
+      eval('findMatchedPoints()');
+    }
   })();
 
   if (
@@ -312,7 +317,13 @@ const orbify = function(X, Y, cb, args = {}) {
     window.data = null;
   }
 
+  // no timeout async/await polyfill -- by rexagod
   this.utils = new Promise(function(resolve) {
+    if (self.args.query === 'corners') {
+      setTimeout(function () {
+        resolve(cornersArray);
+      }, 5000);
+    }
     function uncachedResponse() {
       localStorage.setItem(
           'utils',

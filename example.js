@@ -1,5 +1,7 @@
 var matcher = require('./runner')
 
-matcher(function(err, out, code){
+function callback(err, out, code){
   console.log(out);
-});
+}
+
+matcher(callback);
