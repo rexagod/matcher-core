@@ -81,7 +81,7 @@ function callback(err, out, code) { /* ... */ }
 * After that, just pass that in your matcher's node instance and you're good to go.
 
 ```js
-require('./runner')(callback);
+require('matcher-core')(callback);
 ```
 
 ### Browser
