@@ -93,13 +93,24 @@ require('./runner')(callback);
 * The matcher-core library's [entry point file](/src/orb.core.js) will return a promise back into the callback's scope.
 ```js
 
-  new Matcher('imageX.jpg', 'imageY.jpg',
+  new Matcher(
+    // required fields
+    'imageX.jpg',
+    'imageY.jpg',
     async function (r) {
       res = await r;
       console.log(res);
     }, {
+      // optional fields
+      // 'corners' will only run `findPoints` and NOT `findMatchedPoints` thus
+      // fetching only detected points and NOT the final filtered matches
+      query: 'corners',
+      caching: true,
       leniency: 30,
+      dimensions: [640, 480],
       params: {
+        blur_size: 5,
+        matchThreshold: 30,
         lap_thres: 30,
         eigen_thres: 35
       }
