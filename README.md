@@ -15,7 +15,7 @@
 ## Overview
 
 The process of generating matches takes two phases; `finding` and `matching`. `finding`,
-or identifying interest points in an image, is done using the [`findPoints`](/src/orb.core.js#L205) method. It passes a `cornersArray` to the global `utils` object's `getPoints` object property, which can be stored for later use. `finding` will take a few hundred milliseconds for images of standard sizes (~720p).
+or identifying interest points in an image, is done using the [`findPoints`](/src/orb.core.js#L205) method. It passes a `cornersArray` to the global `utils` object's `points` object property, which can be stored for later use. `finding` will take a few hundred milliseconds for images of standard sizes (~720p).
 
 Please note that the "global `utils` object" mentioned above is returned as a parameter to the callback function from where it can be accessed. See this example:
 
@@ -72,16 +72,16 @@ All arguments other than the ones mentioned below (images and callback function)
 
 ### Node
 
-* As done in [example.js]('/example.js'), in order to run this library and get results in a node environment, you need to initialize a callback function that takes in three arguments, namely err(error), out(output), and code(exit code).
+* As done in [example.js]('/example.js'), in order to run this library and get results in a node environment, you need to resolve the promise sent back from the library.
 
 ```js
-function callback(err, out, code) { /* ... */ }
+Promise.resolve(require('matcher-core')).then(fetchPoints);
 ```
 
-* After that, just pass that in your matcher's node instance and you're good to go.
+* After that, just pass in your custom function (`fetchPoints`) inside the next thenable which will have a `results` object available inside its scope.
 
 ```js
-require('matcher-core')(callback);
+function fetchPoints(results) { /* ... */ }
 ```
 
 ### Browser

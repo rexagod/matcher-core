@@ -300,11 +300,13 @@ const orbify = function(X, Y, cb, args = {}) {
     };
 
     demoApp();
+
     if(args.query === 'corners') {
-      eval('findPoints()');
+      findPoints();
     } else {
-      eval('findMatchedPoints()');
+      findMatchedPoints();
     }
+
   })();
 
   if (
