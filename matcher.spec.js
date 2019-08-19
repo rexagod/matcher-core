@@ -1,27 +1,25 @@
 var matcher = require('./runner')
 
+
+function run(query) {
+  return Promise.resolve(matcher).then(function(raw) {
+    expect(eval(query)).not.toBeUndefined();
+  });
+}
+
+// 'raw' being our resolved raw data (see above)
 describe('matcher', function() {
 
-  var raw_data, corners_data, matches_data;
-
-  matcher(async function(err, out, code) {
-    raw_data = await out;
-    corners_data = await JSON.parse(raw_data).points;
-    matches_data = await JSON.parse(raw_data).matched_points;
+  test('raw data fetched', function() {
+    run('raw');
   });
 
-  test('instantiated raw data', function(done) {
-    expect(raw_data).not.toBeNull();
-    done();
+  test('corners fetched', function() {
+    run('JSON.parse(raw).points');
   });
 
-  test('detected corners', function(done) {
-    expect(corners_data).not.toBeNull();
-    done();
+  test('matches fetched', function() {
+    run('JSON.parse(raw).matched_points');
   });
 
-  test('detected matches', function(done) {
-    expect(matches_data).not.toBeNull();
-    done();
-  });
 });
