@@ -3,7 +3,7 @@ const exec = require("child_process").exec;
 
 const execute = new Promise(function(resolve, reject) {
     exec(`node ${res("./index.js")}`, function(err, out, code) {
-      resolve(err ? err : out);
+      resolve(err ? err : JSON.parse(out));
     });
 });
 
