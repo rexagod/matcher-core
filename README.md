@@ -2,6 +2,12 @@
 
 ![LICENSE](https://img.shields.io/badge/license-GNU--General--Public--License--v3.0-green.svg)
 
+## Installation
+
+Simply do, `npm i matcher-core`.
+
+Also, when using ARM based devices, its highly recommended to additionally install the packages: `libxss1 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxfixes3 libxi6 libxtst6 libnss3 libgconf-2-4 libxrandr2 libasound2 libatk1.0-0 libgtk2.0-0 libgtk-3-0 libxinerama1 libcairo-gobject2` that can be easily installed using `npm run fetch`.
+
 ## Description
 
 `matcher-core` essentially employs the ORB[(Oriented FAST and Rotated BRIEF)](http://www.willowgarage.com/sites/default/files/orb_final.pdf) algorithm to mine patterns using the well-known [FAST(Features from Accelerated Segment Test)](http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/AV1011/AV1FeaturefromAcceleratedSegmentTest.pdf) keypoint detector and the [BRIEF(Binary Robust Independent Elementary Features)](https://www.cs.ubc.ca/~lowe/525/papers/calonder_eccv10.pdf) descriptor technologies, which provide appreciable performance boosts on low computational costs. The main advantages, without going in too deep into details, of building this module around [ORB](http://www.willowgarage.com/sites/default/files/orb_final.pdf) were as follows.
